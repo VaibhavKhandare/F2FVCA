@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mate+SC&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
     <title>F2FVCA</title>
 </head>
 <style>
@@ -18,14 +24,11 @@
 	font-size: 40px;
 	color: white;
 	background: transparent;
-	background-color: #8566aa;
+	background-color: #830c84;
 	padding: 6px 0 2px 0;
 	margin-bottom: 0px;
 	text-align: center;
 }
-h1:hover{
-	color:black;
-  }
   input {
 	font-family: 'Oswald', sans-serif;
 	text-align: center;
@@ -36,9 +39,10 @@ h1:hover{
 	width: 60%;
   margin-top: -10px ;
 	border-bottom: 2px solid #6b5a80;
+  outline:  none;
 }
 .sbtn{
-  /* border:1px solid; */
+   border:1px solid; 
   padding: 4px;
   border-radius: 40%;
 }
@@ -64,10 +68,10 @@ h1:hover{
     <div>
     <div style="display:flex;align-items: center; padding:10px">
       <br>
-      <input id="callingid"/>
+      <input id="callingid" placeholder="Enter Peer ID" />
       <img id="callpeer" 
-      src="https://freepngimg.com/thumb/telephone/70827-google-contacts-mobile-phones-telephone-contact-call-thumb.png"
-      style="top:10px;height:70px;object-fit: cover; width:70px "
+      src="https://www.sellingtimeshares.net/wp-content/uploads/unplug-phone-icon-250x243.png"
+      style="top:10px;height:70px;object-fit: cover; width:70px; cursor:pointer; "
       ></img>
       <div id="status"> </div>
     </div>
@@ -77,92 +81,76 @@ h1:hover{
     </div>
     <br/>
     <span>
-    <span id="videobutton" class=sbtn></span>&nbsp;
+    <span id="videobutton">
+    </span>&nbsp;
     <span id="videostatus"></span></span>&nbsp;
-    <span><span id="audiobutton" class=sbtn></span>&nbsp;
+    <span><span id="audiobutton"></span>&nbsp;
     <span id="audiostatus"></span></span>
     
   </div>
   </div>
   <h1 id="peer"></h1>
-  <!-- <footer style="position:absolute; top:85vh; width:100%">
-    <h1 id="peer"></h1>
-  </footer> -->
 </body>
 <script>
   window.addEventListener('load',(event)=>{
     var peer = new Peer()
     var avlpeer=[]
     peer.on("call",(call)=>{
-      // var mikeval= document.getElementById("mikeval").value =="1"
-    //  var videoval= document.getElementById("videoval").value =="1"
-    //  console.log(mikeval,videoval)
-     navigator.mediaDevices.getUserMedia({video:true,audio:true})
-     .then((stream)=>{
+      navigator.mediaDevices.getUserMedia({video:true,audio:true})
+      .then((stream)=>{
       var buttonvid =document.createElement("buttonvideo")
-
-buttonvid.appendChild(document.createTextNode("Video " ));
-document.getElementById("videostatus").innerHTML = (stream.getVideoTracks()[0].enabled ? "ON" : "OFF")
-buttonvid.onclick=()=>{
-  // console.log(stream.getVideoTracks()[0])
-  stream.getVideoTracks()[0].enabled = !stream.getVideoTracks()[0].enabled 
-  document.getElementById("videostatus").innerHTML = (stream.getVideoTracks()[0].enabled ? "ON" : "OFF")
-}
-document.getElementById("videobutton").append(buttonvid)
-
-var buttonmic = document.createElement("buttonmic")
-buttonmic.appendChild(document.createTextNode("Mic"))
-document.getElementById("audiostatus").innerHTML = (stream.getAudioTracks()[0].enabled ? "ON" : "OFF")
-buttonmic.onclick=()=>{
-  // console.log(stream.getAudioTracks()[0])
-  stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled
-  document.getElementById("audiostatus").innerHTML = (stream.getAudioTracks()[0].enabled ? "ON" : "OFF")
-  
-}
-document.getElementById("audiobutton").append(buttonmic)
-       call.answer(stream)
-       addmine(stream)
-       call.on('stream',(stream)=>{
-         if(!avlpeer.includes(call.peer)){
-           remotevideoadder(stream)
-           avlpeer.push(call.peer)
-           document.getElementById("status").innerHTML = "Recieved Connection from " + call.peer
-          }
-       })
-     }).catch((e)=>{console.log(w)})
-    })
-    const callpeer=(id)=>{
-      // var mikeval= document.getElementById("mikeval").value =="1"
-    //  var videoval= document.getElementById("videoval").value =="1"
-    //  console.log(mikeval,videoval)
-     navigator.mediaDevices.getUserMedia({video:true,audio:true})
-     .then((stream)=>{
-      
-      
-
-      var buttonvid =document.createElement("buttonvideo")
-      buttonvid.appendChild(document.createTextNode("Video"));
+      buttonvid.appendChild(document.createTextNode("Video" ));
+      buttonvid.classList.add("sbtn")
       document.getElementById("videostatus").innerHTML = (stream.getVideoTracks()[0].enabled ? "ON" : "OFF")
-
       buttonvid.onclick=()=>{
-        // console.log(stream.getVideoTracks()[0])
         stream.getVideoTracks()[0].enabled = !stream.getVideoTracks()[0].enabled 
         document.getElementById("videostatus").innerHTML = (stream.getVideoTracks()[0].enabled ? "ON" : "OFF")
       }
       document.getElementById("videobutton").append(buttonvid)
-
       var buttonmic = document.createElement("buttonmic")
       buttonmic.appendChild(document.createTextNode("Mic"))
+      buttonmic.classList.add("sbtn")
       document.getElementById("audiostatus").innerHTML = (stream.getAudioTracks()[0].enabled ? "ON" : "OFF")
       buttonmic.onclick=()=>{
         stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled
         document.getElementById("audiostatus").innerHTML = (stream.getAudioTracks()[0].enabled ? "ON" : "OFF")
       }
       document.getElementById("audiobutton").append(buttonmic)
-
-       addmine(stream)
-       let calling  = peer.call(id,stream)
-       calling.on('stream',(stream)=>{
+      call.answer(stream)
+      addmine(stream)
+      call.on('stream',(stream)=>{
+      if(!avlpeer.includes(call.peer)){
+        remotevideoadder(stream)
+        avlpeer.push(call.peer)
+        document.getElementById("status").innerHTML = "Recieved Connection from " + call.peer
+        }
+      })
+     }).catch((e)=>{console.log(w)})
+    })
+    const callpeer=(id)=>{
+     navigator.mediaDevices.getUserMedia({video:true,audio:true})
+     .then((stream)=>{
+      var buttonvid =document.createElement("buttonvideo")
+      buttonvid.appendChild(document.createTextNode("Video"));
+      buttonvid.classList.add("sbtn")
+      document.getElementById("videostatus").innerHTML = (stream.getVideoTracks()[0].enabled ? "ON" : "OFF")
+      buttonvid.onclick=()=>{
+        stream.getVideoTracks()[0].enabled = !stream.getVideoTracks()[0].enabled 
+        document.getElementById("videostatus").innerHTML = (stream.getVideoTracks()[0].enabled ? "ON" : "OFF")
+      }
+      document.getElementById("videobutton").append(buttonvid)
+      var buttonmic = document.createElement("buttonmic")
+      buttonmic.appendChild(document.createTextNode("Mic"))
+      buttonmic.classList.add("sbtn")
+      document.getElementById("audiostatus").innerHTML = (stream.getAudioTracks()[0].enabled ? "ON" : "OFF")
+      buttonmic.onclick=()=>{
+        stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled
+        document.getElementById("audiostatus").innerHTML = (stream.getAudioTracks()[0].enabled ? "ON" : "OFF")
+      }
+      document.getElementById("audiobutton").append(buttonmic)
+      addmine(stream)
+      let calling  = peer.call(id,stream)
+      calling.on('stream',(stream)=>{
         if(!avlpeer.includes(calling.peer)){
            remotevideoadder(stream)
            avlpeer.push(calling.peer)
@@ -187,11 +175,8 @@ document.getElementById("audiobutton").append(buttonmic)
       video.play()
       document.getElementById("peervideo").append(video)
     }
-    const toggle=()=>{
-      console.log(e)
-    }
     peer.on('open',(id)=>{
-      document.getElementById("peer").innerHTML = "Your id: " + id
+      document.getElementById("peer").innerHTML = "Your Id: " + id
      })
      document.getElementById("callpeer").addEventListener('click',(e)=>{
          let otherpeer=document.getElementById("callingid").value
