@@ -4,29 +4,25 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Mate+SC&display=swap" rel="stylesheet">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
+    <!-- title of doc -->
     <title>F2FVCA</title>
 </head>
 <style>
+  /* adding css to the framework */
   .video{
-    height:100%;
-    width: 100%;
+    height:30vh;
+    width: 30vw;
     object-fit: cover;
     border-radius: 20px;
+    
   }
   h1 {
 	font-family:" 'Mate SC', serif";
 	font-size: 40px;
 	color: white;
 	background: transparent;
-	background-color: #830c84;
+	background-color: #9f359f;
 	padding: 6px 0 2px 0;
-	margin-bottom: 0px;
 	text-align: center;
 }
   input {
@@ -38,11 +34,11 @@
 	font-size: 20px;
 	width: 60%;
   margin-top: -10px ;
-	border-bottom: 2px solid #6b5a80;
+	border-bottom: 2px solid #9f359f;
   outline:  none;
 }
 .sbtn{
-   border:1px solid; 
+  border:1px solid; 
   padding: 4px;
   border-radius: 40%;
 }
@@ -50,23 +46,24 @@
   background-color: grey;
   cursor: pointer;
 }
-
+.screenvideo{
+  width:90vw;
+  height:90vh;
+  object-fit: cover;
+  border-radius: 40px;
+}
+.grids{
+  display: grid;
+  grid-gap: 50px 50px;
+  grid-template-columns: auto auto;
+  padding: 10px;
+}
 </style>
-<script>
-  const toggle=(id)=>{
-    var butval = document.getElementById(id).value
-    document.getElementById(id).value = (butval=="0" ? "1" : "0")
-    console.log(butval)
-  }
-</script>
+<!-- connect with peer server -->
 <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
-
 <body>
     <h1>Face 2 Face Video Calling App</h1> 
-    <div style="display: flex;flex-direction: row;
-    justify-content: center;">
-    <div>
-    <div style="display:flex;align-items: center; padding:10px">
+    <div style="display:flex; align-items: center; padding:10px">
       <br>
       <input id="callingid" placeholder="Enter Peer ID" />
       <img id="callpeer" 
@@ -75,9 +72,10 @@
       ></img>
       <div id="status"> </div>
     </div>
-    <div style="display: flex;align-items: left;">
-      <div id="myvideo" style="height: 60vh; width: 45vw; border: 1px ; border-radius: 20px; overflow:hidden"></div>&nbsp;&nbsp;
-      <div id="peervideo" style="height: 60vh; width: 45vw; border: 1px; border-radius: 20px; overflow:hidden"></div>
+    <div style="display: flex;flex-direction: row;
+    justify-content: center;">
+    <div>
+    <div id="grids" class="grids" >
     </div>
     <br/>
     <span>
@@ -85,8 +83,9 @@
     </span>&nbsp;
     <span id="videostatus"></span></span>&nbsp;
     <span><span id="audiobutton"></span>&nbsp;
-    <span id="audiostatus"></span></span>
-    
+    <span id="audiostatus"></span></span>&nbsp;
+    <!-- <span id="sharescreen" ></span>
+    <div id="screenvideo"></div> -->
   </div>
   </div>
   <h1 id="peer"></h1>
@@ -94,42 +93,16 @@
 <script>
   window.addEventListener('load',(event)=>{
     var peer = new Peer()
+    var conn = [];
+    peer.on('open',(id)=>{
+      document.getElementById("peer").innerHTML = "Your Id: " + id
+     })
     var avlpeer=[]
-    peer.on("call",(call)=>{
-      navigator.mediaDevices.getUserMedia({video:true,audio:true})
-      .then((stream)=>{
-      var buttonvid =document.createElement("buttonvideo")
-      buttonvid.appendChild(document.createTextNode("Video" ));
-      buttonvid.classList.add("sbtn")
-      document.getElementById("videostatus").innerHTML = (stream.getVideoTracks()[0].enabled ? "ON" : "OFF")
-      buttonvid.onclick=()=>{
-        stream.getVideoTracks()[0].enabled = !stream.getVideoTracks()[0].enabled 
-        document.getElementById("videostatus").innerHTML = (stream.getVideoTracks()[0].enabled ? "ON" : "OFF")
-      }
-      document.getElementById("videobutton").append(buttonvid)
-      var buttonmic = document.createElement("buttonmic")
-      buttonmic.appendChild(document.createTextNode("Mic"))
-      buttonmic.classList.add("sbtn")
-      document.getElementById("audiostatus").innerHTML = (stream.getAudioTracks()[0].enabled ? "ON" : "OFF")
-      buttonmic.onclick=()=>{
-        stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled
-        document.getElementById("audiostatus").innerHTML = (stream.getAudioTracks()[0].enabled ? "ON" : "OFF")
-      }
-      document.getElementById("audiobutton").append(buttonmic)
-      call.answer(stream)
-      addmine(stream)
-      call.on('stream',(stream)=>{
-      if(!avlpeer.includes(call.peer)){
-        remotevideoadder(stream)
-        avlpeer.push(call.peer)
-        document.getElementById("status").innerHTML = "Recieved Connection from " + call.peer
-        }
-      })
-     }).catch((e)=>{console.log(w)})
-    })
-    const callpeer=(id)=>{
-     navigator.mediaDevices.getUserMedia({video:true,audio:true})
-     .then((stream)=>{
+    var videoofpeer = false
+    var myvideo = true
+    var mystream = undefined
+    var avlstream = {}    
+    const addmine =(stream)=>{
       var buttonvid =document.createElement("buttonvideo")
       buttonvid.appendChild(document.createTextNode("Video"));
       buttonvid.classList.add("sbtn")
@@ -148,41 +121,97 @@
         document.getElementById("audiostatus").innerHTML = (stream.getAudioTracks()[0].enabled ? "ON" : "OFF")
       }
       document.getElementById("audiobutton").append(buttonmic)
-      addmine(stream)
-      let calling  = peer.call(id,stream)
-      calling.on('stream',(stream)=>{
-        if(!avlpeer.includes(calling.peer)){
-           remotevideoadder(stream)
-           avlpeer.push(calling.peer)
-           document.getElementById("status").innerHTML = "Connected to " + calling.peer
-          }
-       })
-     }).catch((e)=>{console.log(e)})
-    }
-    const addmine =(stream)=>{
-      let video = document.createElement("video")
+      // document.getElementById("sharescreen").innerHTML = "Screen Share"
+      // document.getElementById("sharescreen").classList.add("sbtn") 
+      var video = document.createElement("video")
       video.classList.add("video")
       video.srcObject = stream;
       video.play()
       video.muted=true
-      document.getElementById("myvideo").append(video)
-      
+      document.getElementById("grids").append(video) 
     }
+    console.log(mystream)
+    var getUserMedia = navigator.mediaDevices.getUserMedia || navigator.mediaDevices.webkitGetUserMedia || navigator.mediaDevices.mozGetUserMedia;      
+    getUserMedia({video:true,audio:true})
+    .then((stream)=>{
+      mystream = stream;
+      if(mystream)
+      addmine(mystream) 
+      }).catch((e)=>{console.log(e.message)})
+     console.log(mystream)
+    peer.on("call",(call)=>{
+      // peer is getting call
+      // console.log("rcvdcall")      
+      call.on('stream',(stream)=>{
+      if(!avlpeer.includes(call.peer)){
+        remotevideoadder(stream)
+        let cid = call.peer
+        avlstream.cid = stream
+        videoofpeer = true;
+        avlpeer.push(call.peer)
+        document.getElementById("status").innerHTML = "Recieved Connection from " + call.peer
+        }
+    })
+    call.answer(mystream)
+    // conn.send(avlstream)
+    console.log(avlstream)
+  })
+    const callpeer=(id)=>{
+      //peer is calling
+     var calling  = peer.call(id,mystream)
+    //  calling.on('data',(data)=>{
+    //    console.log(data)
+    //  })
+     calling.on('stream',(streams)=>{
+      if(!avlpeer.includes(calling.peer)){
+           remotevideoadder(streams)
+           avlpeer.push(calling.peer)
+           document.getElementById("status").innerHTML = "Connected to " + calling.peer
+          }
+       })
+    }
+    // const addscreen=(stream)=>{
+    //   var video = document.createElement("video")
+    //   video.classList.add("screenvideo")
+    //   video.srcObject = stream;
+    //   video.play()
+    //   video.muted=true
+    //   document.getElementById("screenvideo").append(video) 
+    // }
+    // const sharescreen=(id)=>{
+    //   //peer is calling
+    //   navigator.mediaDevices.getDisplayMedia({
+    //     video:{cursor:"always"},
+    //     audio: false
+    //   })
+    //   .then((stream)=>{
+    //   addscreen(stream)
+    //   var calling  = peer.call(id,stream)
+    //  }).catch((e)=>{console.log(e)})
+    // }
+    
+
     const remotevideoadder=(stream)=>{
-      let video = document.createElement("video")
+      var video = document.createElement("video")
       video.classList.add("video")
       video.srcObject = stream;
       video.play()
-      document.getElementById("peervideo").append(video)
+      document.getElementById("grids").append(video)
     }
-    peer.on('open',(id)=>{
-      document.getElementById("peer").innerHTML = "Your Id: " + id
-     })
-     document.getElementById("callpeer").addEventListener('click',(e)=>{
-         let otherpeer=document.getElementById("callingid").value
-         document.getElementById("status").innerHTML = "connecting to " + otherpeer
-         callpeer(otherpeer)
-       })
+    
+    
+    document.getElementById("callpeer").addEventListener('click',(e)=>{
+    var otherpeer=document.getElementById("callingid").value
+    document.getElementById("status").innerHTML = "connecting to " + otherpeer
+    callpeer(otherpeer)
+    // document.getElementById("sharescreen").addEventListener('click',(e)=>{
+    // // console.log(avlpeer)
+    // if(avlpeer.length){
+    //   sharescreen(avlpeer[0]);
+    // }
+  
+  })
+// })
   })
 </script>
 </html>
