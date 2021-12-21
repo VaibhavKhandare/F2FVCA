@@ -1,0 +1,89 @@
+.video{
+    height:30vw;
+    width: 45vw;
+    object-fit: cover;
+    border-radius: 10px;
+    resize:both;
+    
+  }
+  h1 {
+	font-family:" 'Mate SC', serif";
+	font-size: 40px;
+	color: white;
+	background: transparent;
+	background-color: #9f359f;
+	padding: 6px 0 2px 0;
+	text-align: center;
+}
+  input {
+	font-family: 'Oswald', sans-serif;
+	text-align: center;
+	height: 70px;
+	border: none;
+	background: transparent;
+	font-size: 20px;
+	width: 60%;
+  margin-top: -10px ;
+	border-bottom: 2px solid #9f359f;
+  outline:  none;
+}
+.sbtn{
+  border:1px solid; 
+  padding: 4px;
+  border-radius: 40%;
+}
+.sbtn:hover{
+  background-color: grey;
+  cursor: pointer;
+}
+.screenvideo{
+  width:90vw;
+  height:90vh;
+  object-fit: cover;
+  border-radius: 40px;
+}
+.grids{
+  display: grid;
+  grid-gap: 50px 50px;
+  grid-template-columns: auto auto;
+  padding: 10px;
+}
+.xoxgrids{
+  display: grid;
+  grid-gap: 5px 5px;
+  grid-template-columns: 80px 80px 80px;
+  padding: 10px;
+}
+.mainmessage{
+  margin:5px;
+  height:450px;
+  width:400px;
+  border-radius: 25px;
+  border: 1px solid;
+  padding: 5px;
+  overflow: hidden;
+}
+.allmessages{
+  height:280px;
+  width:350px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+.additional{
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+}  
+.xoxtile{
+  padding: 10px;
+  height: 45px;
+  border: 1px solid;
+  text-align: center;
+  align-items: center;
+  font-size: 45px;
+}
+.xoxtile:hover{
+  background-color: greenyellow;
+  cursor: pointer;
+}

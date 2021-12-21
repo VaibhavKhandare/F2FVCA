@@ -4,66 +4,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- title of doc -->
     <title>F2FVCA</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
-<style>
-  /* adding css to the framework */
-  .video{
-    height:200px;
-    width: 300px;
-    object-fit: cover;
-    border-radius: 10px;
-    resize:both;
-    
-  }
-  h1 {
-	font-family:" 'Mate SC', serif";
-	font-size: 40px;
-	color: white;
-	background: transparent;
-	background-color: #9f359f;
-	padding: 6px 0 2px 0;
-	text-align: center;
-}
-  input {
-	font-family: 'Oswald', sans-serif;
-	text-align: center;
-	height: 70px;
-	border: none;
-	background: transparent;
-	font-size: 20px;
-	width: 60%;
-  margin-top: -10px ;
-	border-bottom: 2px solid #9f359f;
-  outline:  none;
-}
-.sbtn{
-  border:1px solid; 
-  padding: 4px;
-  border-radius: 40%;
-}
-.sbtn:hover{
-  background-color: grey;
-  cursor: pointer;
-}
-.screenvideo{
-  width:90vw;
-  height:90vh;
-  object-fit: cover;
-  border-radius: 40px;
-}
-.grids{
-  display: grid;
-  grid-gap: 50px 50px;
-  grid-template-columns: auto auto auto;
-  padding: 10px;
-}
-</style>
-<!-- connect with peer server -->
 <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
 <body>
-    <h1>Face 2 Face Video Calling App</h1> 
+    <h1 style="margin:0px">Face 2 Face Video Calling App</h1> 
     <div style="display:flex; align-items: center; padding:10px">
       <br>
       <input id="callingid" placeholder="Enter Peer ID" />
@@ -85,254 +31,39 @@
     <span id="videostatus"></span></span>&nbsp;
     <span><span id="audiobutton"></span>&nbsp;
     <span id="audiostatus"></span></span>&nbsp;
-    <!-- <span id="sharescreen" ></span>
-    <div id="screenvideo"></div> -->
   </div>
   </div>
-  <h1 id="peer"></h1>
+  <h1>Your Id: <span id="peer">Loading... </span><img id="copy" 
+    src="https://cdn-icons-png.flaticon.com/128/160/160421.png"
+    style="top:10px;height:35px;object-fit: cover; cursor:pointer;"></img>
+  <span id="copystatus" style="font-size:90%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></h1>
+  <div class="additional">
+  <div class="mainmessage"> 
+    <h1>Messages</h1>
+    <div class ="allmessages"id="allmessages"></div>
+    <input id="messagetype" placeholder="Message..." />
+    <button id="sendmsg">Send</button>
+    </div>
+    <div class="mainmessage"> 
+      <h1>XOX game</h1>
+      <input id="playerid" placeholder="Input Player Id" />
+      <button id="conplayer">Play</button>
+      <span id="mulgamestatus"></span> 
+      <div id = "XOXtiles" class="xoxgrids">
+        <span id="xox1" class="xoxtile"></span>
+        <span id="xox2" class="xoxtile"></span>
+        <span id="xox3" class="xoxtile"></span>
+        <span id="xox4" class="xoxtile"></span>
+        <span id="xox5" class="xoxtile"></span>
+        <span id="xox6" class="xoxtile"></span>
+        <span id="xox7" class="xoxtile"></span>
+        <span id="xox8" class="xoxtile"></span>
+        <span id="xox9" class="xoxtile"></span>
+      </div>
+      <strong><span id="mulstatus">Play XOX</span></strong>
+      </div> 
+      </div>
+    </div>
 </body>
-<script>
-  const addmine =(stream)=>{
-      var buttonvid =document.createElement("buttonvideo")
-      buttonvid.appendChild(document.createTextNode("Video"));
-      buttonvid.classList.add("sbtn")
-      document.getElementById("videostatus").textContent = (stream.getVideoTracks()[0].enabled ? "ON" : "OFF")
-      buttonvid.onclick=()=>{
-        stream.getVideoTracks()[0].enabled = !stream.getVideoTracks()[0].enabled 
-        document.getElementById("videostatus").textContent = (stream.getVideoTracks()[0].enabled ? "ON" : "OFF")
-      }
-      document.getElementById("videobutton").append(buttonvid)
-      var buttonmic = document.createElement("buttonmic")
-      buttonmic.appendChild(document.createTextNode("Mic"))
-      buttonmic.classList.add("sbtn")
-      document.getElementById("audiostatus").textContent = (stream.getAudioTracks()[0].enabled ? "ON" : "OFF")
-      buttonmic.onclick=()=>{
-        stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled
-        document.getElementById("audiostatus").textContent = (stream.getAudioTracks()[0].enabled ? "ON" : "OFF")
-      }
-      document.getElementById("audiobutton").append(buttonmic)
-      // document.getElementById("sharescreen").textContent = "Screen Share"
-      // document.getElementById("sharescreen").classList.add("sbtn") 
-      var video = document.createElement("video")
-      video.classList.add("video")
-      video.srcObject = stream;
-      video.play()
-      video.muted=true
-      document.getElementById("grids").append(video) 
-    }
-  window.addEventListener('load',(event)=>{
-    var peer = new Peer()
-    var conn = [];
-    peer.on('open',(id)=>{
-      document.getElementById("peer").textContent = "Your Id: " + id
-      myid = id;
-     })
-    var avlpeer=[]
-    var videoofpeer = false
-    var myvideo = true
-    var mystream = undefined
-    var avlstream = {}    
-    // console.log(mystream)
-    var getUserMedia = navigator.mediaDevices.getUserMedia || navigator.mediaDevices.webkitGetUserMedia || navigator.mediaDevices.mozGetUserMedia;      
-    getUserMedia({video:true,audio:true})
-    .then((stream)=>{
-      mystream = stream;
-      if(mystream)
-      addmine(mystream) 
-      }).catch((e)=>{console.log(e.message)})
-    //  console.log(mystream)
-    // peer.on("call",(call)=>{
-    //   // peer is getting call
-    //   // console.log("rcvdcall")      
-    //   call.on('stream',(stream)=>{
-    //   if(!avlpeer.includes(call.peer)){
-    //     remotevideoadder(stream)
-    //     let cid = call.peer
-    //     avlstream.cid = stream
-    //     videoofpeer = true;
-    //     avlpeer.push(call.peer)
-    //     document.getElementById("status").textContent = "Recieved Connection from " + call.peer
-    //     }
-    //   })
-    //   call.answer(mystream)
-    //   // conn.send(avlstream)
-    //   console.log(avlstream)})
-    // const callpeer=(id)=>{
-    //   //peer is calling
-    //  var calling  = peer.call(id,mystream)
-    // //  calling.on('data',(data)=>{
-    // //    console.log(data)
-    // //  })
-    //  calling.on('stream',(streams)=>{
-    //   if(!avlpeer.includes(calling.peer)){
-    //        remotevideoadder(streams)
-    //        avlpeer.push(calling.peer)
-    //        document.getElementById("status").textContent = "Connected to " + calling.peer
-    //       }
-    //    })
-    // }
-    
-    // peer.on("call",(call)=>{
-    //   // peer is getting call
-    //   // console.log("rcvdcall")      
-    //   call.on('stream',(stream)=>{
-    //   if(!avlpeer.includes(call.peer)){
-    //     remotevideoadder(stream)
-    //     let cid = call.peer
-    //     avlstream.cid = stream
-    //     videoofpeer = true;
-    //     avlpeer.push(call.peer)
-    //     document.getElementById("status").textContent = "Recieved Connection from " + call.peer
-    //     }
-    //   })
-    //   call.answer(mystream)
-    //   // conn.send(avlstream)
-    //   console.log(avlstream)})
-    var myid
-    var allcon= []
-    var peervids=[];
-    var called = []
-    peer.on('connection', function(conn) {
-		conn.on('open', function() {
-			// Receive messages
-			conn.on('data', function(data) {
-				// console.log('Received', data);
-                if(typeof(data)!='object'){
-                    if(!allcon.includes(data)){
-                        allcon.push(data)
-                        // console.log(allcon)
-                        sendstream([data]);
-                        sendall(allcon);
-                    }
-                }else{
-                    sendstream(data);
-                }
-			});			
-			// Send messages 
-		});
-	});
-  peer.on('call',(call)=>{
-    // console.log("asdfasdf")
-    call.on('stream',(stream)=>{
-      
-      if(!called.includes(call.peer)){
-        if(!peervids.includes(call.peer)){
-              remotevideoadder(stream,call.peer)
-              peervids.push(call.peer)
-            }
-        // remotevideoadder(stream)
-        // console.log(call.peer)
-        called.push(call.peer)
-    }
-    })
-    call.answer(mystream)
-  })
-    const sendall = (allcon)=>{      
-      // for(let i = 0; i<allcon.length;i++){
-      //   let arr = [];
-      //   for(let j=0;j<allcon.length;j++){
-      //     arr.push(allcon[j]) 
-      //   }
-      //   if(arr.length){
-      //   var conn = peer.connect(allcon[i]);
-      //   conn.on('open',function(){conn.send(arr)})}
-      // }
-        allcon.map((i)=>{
-            var conn = peer.connect(i);
-            conn.on('open',function(){conn.send(allcon)})
-        })
-    }
-    const sendstream=(allcon)=>{
-      // console.log(allcon)
-      allcon.map((i)=>{
-        if(i!=myid && !called.includes(i)){
-          // console.log(i)
-          var calling = peer.call(i,mystream)
-          calling.on('stream',(stream)=>{
-            if(!peervids.includes(calling.peer)){
-              remotevideoadder(stream,calling.peer)
-              peervids.push(calling.peer)
-            }
-          })
-          called.push(i)
-        }
-      }
-      )
-    }
-    const callpeer=(id)=>{
-        // var conn = peer.connect(id);
-        // conn.on('open',()=>{
-        //     conn.on('data',(data)=>{
-        //         console.log("rcvd data",data)
-        //     })
-        //     conn.send("sending msg")
-        // })
-        var conn = peer.connect(id);
-		conn.on('open', function() {
-			// Receive messages
-			// conn.on('data', function(data) {
-			// 	console.log('Received', data);
-			// });
-			
-			// Send messages
-			conn.send(myid);
-		});	
-    //   //peer is calling
-    //  var calling  = peer.call(id,mystream)
-    // //  calling.on('data',(data)=>{
-    // //    console.log(data)
-    // //  })
-    //  calling.on('stream',(streams)=>{
-    //   if(!avlpeer.includes(calling.peer)){
-    //        remotevideoadder(streams)
-    //        avlpeer.push(calling.peer)
-    //        document.getElementById("status").textContent = "Connected to " + calling.peer
-    //       }
-    //    })
-    }
-
-    // const addscreen=(stream)=>{
-    //   var video = document.createElement("video")
-    //   video.classList.add("screenvideo")
-    //   video.srcObject = stream;
-    //   video.play()
-    //   video.muted=true
-    //   document.getElementById("screenvideo").append(video) 
-    // }
-    // const sharescreen=(id)=>{
-    //   //peer is calling
-    //   navigator.mediaDevices.getDisplayMedia({
-    //     video:{cursor:"always"},
-    //     audio: false
-    //   })
-    //   .then((stream)=>{
-    //   addscreen(stream)
-    //   var calling  = peer.call(id,stream)
-    //  }).catch((e)=>{console.log(e)})
-    // }
-    
-
-    const remotevideoadder=(stream,id)=>{
-      var video = document.createElement("video")
-      video.classList.add("video")
-      video.srcObject = stream;
-      video.play()
-      document.getElementById("grids").append(video)
-    }
-    
-    
-    document.getElementById("callpeer").addEventListener('click',(e)=>{
-    var otherpeer=document.getElementById("callingid").value
-    document.getElementById("status").textContent = "connecting to " + otherpeer
-    callpeer(otherpeer)
-    // document.getElementById("sharescreen").addEventListener('click',(e)=>{
-    // // console.log(avlpeer)
-    // if(avlpeer.length){
-    //   sharescreen(avlpeer[0]);
-    // }
-  
-  })
-// })
-  })
-</script>
+<script src="script.js"></script>
 </html>
