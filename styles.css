@@ -3,8 +3,6 @@
     width: 45vw;
     object-fit: cover;
     border-radius: 10px;
-    resize:both;
-    
   }
   h1 {
 	font-family:" 'Mate SC', serif";
@@ -26,6 +24,14 @@
   margin-top: -10px ;
 	border-bottom: 2px solid #9f359f;
   outline:  none;
+}
+.myvid{
+  height:150px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.myvidbox{
+  padding: 10px;
 }
 .sbtn{
   border:1px solid; 
@@ -86,4 +92,22 @@
 .xoxtile:hover{
   background-color: greenyellow;
   cursor: pointer;
+}
+@media only screen and (max-width: 600px) {
+  h1 {
+    font-size: 25px;
+  }
+  .grids{
+    grid-template-columns: auto;
+  }
+  .additional{
+    flex-direction: column;
+  }  
+  .mainmessage{
+    width:80vw;
+  }
+  .video{
+    height:80vh;
+    width: 80vw;
+  }
 }
