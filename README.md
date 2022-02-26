@@ -1,6 +1,6 @@
 # F2FVCA
 A 1 on 1 video calling program 
-![image](https://user-images.githubusercontent.com/56597655/155841935-c094e54e-fcd8-4c9c-b2dd-83473915abfd.png)
+![image](https://user-images.githubusercontent.com/56597655/155842134-e911a1ad-cc7e-4e29-aff9-28807dfa5efe.png)
 #Tools Used
 HTML & CSS:  gives the layout, look and feel of the web application 
 Javascript: Gives dynamic behaviour and handles the functions of PeerJS 
